@@ -8,7 +8,8 @@ class CreativityGenerator {
                     { text: 'Energetic', icon: 'fa-bolt' },
                     { text: 'Calm', icon: 'fa-peace' },
                     { text: 'Tired', icon: 'fa-moon' },
-                    { text: 'Inspired', icon: 'fa-lightbulb' }
+                    { text: 'Inspired', icon: 'fa-lightbulb' },
+                    { text: 'Depressed', icon: 'fa-cloud-rain' }
                 ]
             },
             {
@@ -241,6 +242,59 @@ class CreativityGenerator {
                         'Create a creative workout plan',
                         'Design and follow an intense routine',
                         'Write and practice a creative fitness routine'
+                    ]
+                }
+            },
+            depressed: {
+                '5-10 minutes': {
+                    'Creative': [
+                        'Write three things you\'re grateful for',
+                        'Create a list of your favorite memories',
+                        'Write a letter to your future self'
+                    ],
+                    'Physical': [
+                        'Take a short walk outside',
+                        'Do gentle stretching exercises',
+                        'Practice deep breathing for 5 minutes'
+                    ],
+                    'Both': [
+                        'Write affirmations while walking',
+                        'Create a gratitude journal while stretching',
+                        'Draw your happy place while doing breathing exercises'
+                    ]
+                },
+                '15-30 minutes': {
+                    'Creative': [
+                        'Write about what makes you smile',
+                        'Create a list of your achievements',
+                        'Write a story about overcoming a challenge'
+                    ],
+                    'Physical': [
+                        'Take a longer walk in nature',
+                        'Do a gentle yoga session',
+                        'Practice mindful movement'
+                    ],
+                    'Both': [
+                        'Create a nature journal while walking',
+                        'Write and practice self-care activities',
+                        'Design and follow a gentle movement routine'
+                    ]
+                },
+                '30+ minutes': {
+                    'Creative': [
+                        'Write about your dreams and aspirations',
+                        'Create a collection of positive thoughts',
+                        'Write about what inspires you'
+                    ],
+                    'Physical': [
+                        'Take a long walk in nature',
+                        'Do a complete gentle workout',
+                        'Practice restorative yoga'
+                    ],
+                    'Both': [
+                        'Create a gentle movement journal',
+                        'Design and follow a restorative routine',
+                        'Write and practice gentle exercises'
                     ]
                 }
             }
