@@ -43,7 +43,14 @@ class CreativityGenerator {
                     'Physical': [
                         'Do 20 push-ups',
                         'Run in place for 5 minutes',
-                        'Do 30 jumping jacks'
+                        'Do 30 jumping jacks',
+                        'Do 15 burpees',
+                        'Do 40 mountain climbers',
+                        'Do 25 high knees',
+                        'Do 20 squat jumps',
+                        'Do 30 seconds plank, 30 seconds rest, repeat 3 times',
+                        'Do 20 lunges (10 each leg)',
+                        'Do 15 tuck jumps'
                     ],
                     'Both': [
                         'Write a poem while doing squats',
@@ -369,21 +376,15 @@ class CreativityGenerator {
         const time = this.answers.time;
         const preference = this.answers.preference;
         
-        const tasks = this.creativeTasks[mood][time][preference];
-        
-        // Create a copy of the tasks array to avoid repeating tasks
-        let availableTasks = [...tasks];
-        
-        // Get a random task from the available tasks
-        const randomIndex = Math.floor(Math.random() * availableTasks.length);
-        const randomTask = availableTasks[randomIndex];
+        // Generate task dynamically based on mood, time, and preference
+        const task = this.generateDynamicTask(mood, time, preference);
         
         const taskData = {
             date: new Date().toLocaleDateString(),
             mood,
             time,
             preference,
-            task: randomTask
+            task: task
         };
         
         // Update user history if logged in
@@ -397,6 +398,63 @@ class CreativityGenerator {
         localStorage.setItem('creativityHistory', JSON.stringify(this.history));
         
         this.renderTask(taskData);
+    }
+
+    generateDynamicTask(mood, time, preference) {
+        // Base exercises and modifiers
+        const exercises = {
+            cardio: ['run', 'jog', 'walk', 'dance', 'jump', 'swim', 'bike', 'skip'],
+            strength: ['push-ups', 'squats', 'lunges', 'plank', 'crunches', 'burpees', 'mountain climbers'],
+            flexibility: ['stretch', 'yoga', 'tai chi', 'pilates', 'dance moves', 'mobility exercises'],
+            creative: ['write', 'draw', 'paint', 'compose', 'design', 'create', 'sketch', 'craft']
+        };
+
+        // Intensity modifiers based on mood
+        const intensityModifiers = {
+            energetic: ['high-intensity', 'energetic', 'powerful', 'dynamic', 'vigorous'],
+            calm: ['gentle', 'mindful', 'peaceful', 'relaxed', 'smooth'],
+            tired: ['light', 'easy', 'gentle', 'simple', 'relaxed'],
+            inspired: ['creative', 'expressive', 'dynamic', 'energetic', 'innovative'],
+            depressed: ['gentle', 'mindful', 'supportive', 'nurturing', 'calm']
+        };
+
+        // Time-based modifiers
+        const timeModifiers = {
+            '5-10 minutes': {
+                duration: '5-10 minutes',
+                reps: ['10-15', '15-20', '20-25', '25-30', '30-45 seconds']
+            },
+            '15-30 minutes': {
+                duration: '15-30 minutes',
+                reps: ['30-40', '40-50', '50-60', '1-2 sets', '2-3 sets']
+            },
+            '30+ minutes': {
+                duration: '30+ minutes',
+                reps: ['45-60', '60-90', '2-3 sets', '3-4 sets', 'complete session']
+            }
+        };
+
+        // Generate task based on preference
+        if (preference === 'Physical') {
+            const exerciseType = Object.keys(exercises)[Math.floor(Math.random() * Object.keys(exercises).length)];
+            const exercise = exercises[exerciseType][Math.floor(Math.random() * exercises[exerciseType].length)];
+            const intensity = intensityModifiers[mood][Math.floor(Math.random() * intensityModifiers[mood].length)];
+            const reps = timeModifiers[time].reps[Math.floor(Math.random() * timeModifiers[time].reps.length)];
+            
+            return `Do ${reps} ${intensity} ${exercise}`;
+        } else if (preference === 'Creative') {
+            const creativeAction = exercises.creative[Math.floor(Math.random() * exercises.creative.length)];
+            const intensity = intensityModifiers[mood][Math.floor(Math.random() * intensityModifiers[mood].length)];
+            
+            return `${intensity} ${creativeAction} for ${timeModifiers[time].duration}`;
+        } else { // Both
+            const exerciseType = Object.keys(exercises)[Math.floor(Math.random() * Object.keys(exercises).length)];
+            const exercise = exercises[exerciseType][Math.floor(Math.random() * exercises[exerciseType].length)];
+            const creativeAction = exercises.creative[Math.floor(Math.random() * exercises.creative.length)];
+            const intensity = intensityModifiers[mood][Math.floor(Math.random() * intensityModifiers[mood].length)];
+            
+            return `While doing ${intensity} ${exercise}, ${creativeAction} for ${timeModifiers[time].duration}`;
+        }
     }
 
     renderTask(taskData) {
