@@ -370,7 +370,13 @@ class CreativityGenerator {
         const preference = this.answers.preference;
         
         const tasks = this.creativeTasks[mood][time][preference];
-        const randomTask = tasks[Math.floor(Math.random() * tasks.length)];
+        
+        // Create a copy of the tasks array to avoid repeating tasks
+        let availableTasks = [...tasks];
+        
+        // Get a random task from the available tasks
+        const randomIndex = Math.floor(Math.random() * availableTasks.length);
+        const randomTask = availableTasks[randomIndex];
         
         const taskData = {
             date: new Date().toLocaleDateString(),
