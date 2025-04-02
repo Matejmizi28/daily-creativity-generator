@@ -1,6 +1,9 @@
 class CreativityGenerator {
     constructor() {
-        this.users = JSON.parse(localStorage.getItem('users')) || {};
+        // Initialize users from localStorage or create empty object
+        const savedUsers = localStorage.getItem('users');
+        this.users = savedUsers ? JSON.parse(savedUsers) : {};
+        
         this.questions = [
             {
                 id: 'mood',
@@ -682,12 +685,15 @@ class CreativityGenerator {
         const email = e.target[0].value;
         const password = e.target[1].value;
 
-        // Reload users data before checking
-        this.users = JSON.parse(localStorage.getItem('users')) || {};
+        // Always get the latest users data from localStorage
+        const savedUsers = localStorage.getItem('users');
+        this.users = savedUsers ? JSON.parse(savedUsers) : {};
 
         if (this.users[email] && this.users[email].password === password) {
             this.currentUser = email;
             localStorage.setItem('currentUser', email);
+            // Make sure to save the full users object
+            localStorage.setItem('users', JSON.stringify(this.users));
             this.updateAuthUI();
             this.hideAuthModal();
             alert('Successfully signed in!');
@@ -702,8 +708,9 @@ class CreativityGenerator {
         const password = e.target[2].value;
         const confirmPassword = e.target[3].value;
 
-        // Reload users data before checking
-        this.users = JSON.parse(localStorage.getItem('users')) || {};
+        // Always get the latest users data from localStorage
+        const savedUsers = localStorage.getItem('users');
+        this.users = savedUsers ? JSON.parse(savedUsers) : {};
 
         if (password !== confirmPassword) {
             alert('Passwords do not match');
@@ -721,16 +728,17 @@ class CreativityGenerator {
             history: []
         };
 
+        // Save both the current user and the updated users object
         localStorage.setItem('users', JSON.stringify(this.users));
-        this.currentUser = email;
         localStorage.setItem('currentUser', email);
+        this.currentUser = email;
         this.updateAuthUI();
         this.hideAuthModal();
         alert('Successfully signed up!');
     }
 
     handleSignOut() {
-        // Make sure to save any user data before signing out
+        // Make sure to save the full users object before signing out
         if (this.currentUser) {
             localStorage.setItem('users', JSON.stringify(this.users));
         }
@@ -741,14 +749,16 @@ class CreativityGenerator {
     }
 
     checkAuthStatus() {
-        // Reload users data when checking auth status
-        this.users = JSON.parse(localStorage.getItem('users')) || {};
+        // Always get the latest users data from localStorage
+        const savedUsers = localStorage.getItem('users');
+        this.users = savedUsers ? JSON.parse(savedUsers) : {};
+        
         const savedUser = localStorage.getItem('currentUser');
         if (savedUser && this.users[savedUser]) {
             this.currentUser = savedUser;
             this.updateAuthUI();
         } else {
-            // If no user is logged in, update UI accordingly
+            this.currentUser = null;
             this.updateAuthUI();
         }
     }
