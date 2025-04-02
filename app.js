@@ -1,5 +1,6 @@
 class CreativityGenerator {
     constructor() {
+        this.users = JSON.parse(localStorage.getItem('users')) || {};
         this.questions = [
             {
                 id: 'mood',
@@ -318,7 +319,6 @@ class CreativityGenerator {
         
         // Add authentication properties
         this.currentUser = null;
-        this.users = JSON.parse(localStorage.getItem('users')) || {};
         
         // Initialize time and weather features
         this.initTimeAndWeather();
@@ -682,6 +682,9 @@ class CreativityGenerator {
         const email = e.target[0].value;
         const password = e.target[1].value;
 
+        // Reload users data before checking
+        this.users = JSON.parse(localStorage.getItem('users')) || {};
+
         if (this.users[email] && this.users[email].password === password) {
             this.currentUser = email;
             localStorage.setItem('currentUser', email);
@@ -698,6 +701,9 @@ class CreativityGenerator {
         const email = e.target[1].value;
         const password = e.target[2].value;
         const confirmPassword = e.target[3].value;
+
+        // Reload users data before checking
+        this.users = JSON.parse(localStorage.getItem('users')) || {};
 
         if (password !== confirmPassword) {
             alert('Passwords do not match');
@@ -723,10 +729,26 @@ class CreativityGenerator {
         alert('Successfully signed up!');
     }
 
+    handleSignOut() {
+        // Make sure to save any user data before signing out
+        if (this.currentUser) {
+            localStorage.setItem('users', JSON.stringify(this.users));
+        }
+        this.currentUser = null;
+        localStorage.removeItem('currentUser');
+        this.updateAuthUI();
+        this.startOver();
+    }
+
     checkAuthStatus() {
+        // Reload users data when checking auth status
+        this.users = JSON.parse(localStorage.getItem('users')) || {};
         const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
+        if (savedUser && this.users[savedUser]) {
             this.currentUser = savedUser;
+            this.updateAuthUI();
+        } else {
+            // If no user is logged in, update UI accordingly
             this.updateAuthUI();
         }
     }
@@ -748,13 +770,6 @@ class CreativityGenerator {
             historyBtn.style.display = 'none';
             signOutBtn.style.display = 'none';
         }
-    }
-
-    handleSignOut() {
-        this.currentUser = null;
-        localStorage.removeItem('currentUser');
-        this.updateAuthUI();
-        this.startOver(); // Reset the generator to initial state
     }
 
     showUserHistory() {
