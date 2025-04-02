@@ -1,7 +1,7 @@
 class CreativityGenerator {
     constructor() {
         // Initialize users from localStorage or create empty object
-        const savedUsers = localStorage.getItem('users');
+        const savedUsers = localStorage.getItem('allUsers');
         this.users = savedUsers ? JSON.parse(savedUsers) : {};
         
         this.questions = [
@@ -393,7 +393,7 @@ class CreativityGenerator {
         // Update user history if logged in
         if (this.currentUser) {
             this.users[this.currentUser].history.unshift(taskData);
-            localStorage.setItem('users', JSON.stringify(this.users));
+            localStorage.setItem('allUsers', JSON.stringify(this.users));
         }
         
         // Update local history
@@ -685,20 +685,24 @@ class CreativityGenerator {
         const email = e.target[0].value;
         const password = e.target[1].value;
 
-        // Always get the latest users data from localStorage
-        const savedUsers = localStorage.getItem('users');
-        this.users = savedUsers ? JSON.parse(savedUsers) : {};
+        // Get the latest users data
+        const savedUsers = localStorage.getItem('allUsers');
+        if (savedUsers) {
+            this.users = JSON.parse(savedUsers);
+        }
+
+        console.log('Attempting login with:', email); // Debug log
+        console.log('Available users:', this.users); // Debug log
 
         if (this.users[email] && this.users[email].password === password) {
             this.currentUser = email;
             localStorage.setItem('currentUser', email);
-            // Make sure to save the full users object
-            localStorage.setItem('users', JSON.stringify(this.users));
+            localStorage.setItem('allUsers', JSON.stringify(this.users));
             this.updateAuthUI();
             this.hideAuthModal();
             alert('Successfully signed in!');
         } else {
-            alert('Invalid email or password');
+            alert('Invalid email or password. Please try again.');
         }
     }
 
@@ -708,9 +712,11 @@ class CreativityGenerator {
         const password = e.target[2].value;
         const confirmPassword = e.target[3].value;
 
-        // Always get the latest users data from localStorage
-        const savedUsers = localStorage.getItem('users');
-        this.users = savedUsers ? JSON.parse(savedUsers) : {};
+        // Get the latest users data
+        const savedUsers = localStorage.getItem('allUsers');
+        if (savedUsers) {
+            this.users = JSON.parse(savedUsers);
+        }
 
         if (password !== confirmPassword) {
             alert('Passwords do not match');
@@ -722,44 +728,57 @@ class CreativityGenerator {
             return;
         }
 
+        // Create new user
         this.users[email] = {
             username,
             password,
-            history: []
+            history: [],
+            createdAt: new Date().toISOString()
         };
 
-        // Save both the current user and the updated users object
-        localStorage.setItem('users', JSON.stringify(this.users));
+        // Save everything
+        localStorage.setItem('allUsers', JSON.stringify(this.users));
         localStorage.setItem('currentUser', email);
         this.currentUser = email;
+
+        console.log('New user created:', email); // Debug log
+        console.log('All users:', this.users); // Debug log
+
         this.updateAuthUI();
         this.hideAuthModal();
         alert('Successfully signed up!');
     }
 
     handleSignOut() {
-        // Make sure to save the full users object before signing out
         if (this.currentUser) {
-            localStorage.setItem('users', JSON.stringify(this.users));
+            // Save current state before logging out
+            localStorage.setItem('allUsers', JSON.stringify(this.users));
         }
         this.currentUser = null;
         localStorage.removeItem('currentUser');
         this.updateAuthUI();
         this.startOver();
+        
+        console.log('User signed out'); // Debug log
+        console.log('Saved users:', localStorage.getItem('allUsers')); // Debug log
     }
 
     checkAuthStatus() {
-        // Always get the latest users data from localStorage
-        const savedUsers = localStorage.getItem('users');
-        this.users = savedUsers ? JSON.parse(savedUsers) : {};
+        // Get the latest users data
+        const savedUsers = localStorage.getItem('allUsers');
+        if (savedUsers) {
+            this.users = JSON.parse(savedUsers);
+        }
         
         const savedUser = localStorage.getItem('currentUser');
         if (savedUser && this.users[savedUser]) {
             this.currentUser = savedUser;
             this.updateAuthUI();
+            console.log('User session restored:', savedUser); // Debug log
         } else {
             this.currentUser = null;
             this.updateAuthUI();
+            console.log('No valid session found'); // Debug log
         }
     }
 
